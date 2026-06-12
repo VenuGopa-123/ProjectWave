@@ -81,26 +81,19 @@ Here!
 
 <script>
 
-const URL=
-"https://stcyjxvxmsrddbbpksqw.supabase.co";
-
-const KEY=
-"sb_publishable_Ess0L13-6qNB0C4qwUMPDg_AokMv0M2";
+const URL="PASTE_YOUR_PROJECT_URL";
+const KEY="PASTE_YOUR_ANON_KEY";
 
 async function upload(){
 
 let files=
 document
-.getElementById(
-"files"
-)
+.getElementById("files")
 .files;
 
 if(files.length===0){
 
-alert(
-"Select files first"
-);
+alert("Select file");
 
 return;
 
@@ -110,13 +103,6 @@ for(let f of files){
 
 try{
 
-document
-.getElementById(
-"status"
-)
-.innerHTML=
-"Uploading...";
-
 let path=
 Date.now()
 +
@@ -124,6 +110,7 @@ Date.now()
 +
 f.name;
 
+let response=
 await fetch(
 
 URL+
@@ -132,7 +119,7 @@ URL+
 
 +
 
-path,
+encodeURIComponent(path),
 
 {
 
@@ -143,7 +130,12 @@ headers:{
 apikey:KEY,
 
 Authorization:
-"Bearer "+KEY
+"Bearer "+KEY,
+
+"x-upsert":"true",
+
+"Content-Type":
+f.type
 
 },
 
@@ -153,6 +145,21 @@ body:f
 
 );
 
+if(!response.ok){
+
+let err=
+await response.text();
+
+alert(
+"Upload failed\n"
++
+err
+);
+
+continue;
+
+}
+
 let publicUrl=
 
 URL+
@@ -161,7 +168,7 @@ URL+
 
 +
 
-path;
+encodeURIComponent(path);
 
 let ext=
 f.name
@@ -170,28 +177,12 @@ f.name
 .toLowerCase();
 
 let html=
-'<div class="item">';
+"<div>";
 
 html+=
-"<h3>"
-+
-f.name
-+
-"</h3>";
+"<h3>"+f.name+"</h3>";
 
 if(
-["jpg","jpeg","png","gif","webp"]
-.includes(ext)
-){
-
-html+=
-`
-<img src="${publicUrl}">
-`;
-
-}
-
-else if(
 ["mp3","wav","ogg"]
 .includes(ext)
 ){
@@ -212,7 +203,7 @@ else if(
 
 html+=
 `
-<video controls>
+<video width="400" controls>
 <source src="${publicUrl}">
 </video>
 `;
@@ -220,16 +211,15 @@ html+=
 }
 
 else if(
-ext==="pdf"
+["jpg","jpeg","png","webp"]
+.includes(ext)
 ){
 
 html+=
 `
-<iframe
+<img
 src="${publicUrl}"
-width="100%"
-height="500">
-</iframe>
+width="300">
 `;
 
 }
@@ -249,20 +239,7 @@ Open File
 
 }
 
-html+=
-`
-<br>
-
-<a
-href="${publicUrl}"
-target="_blank">
-
-Open Directly
-
-</a>
-
-</div>
-`;
+html+="</div>";
 
 document
 .getElementById(
@@ -275,27 +252,15 @@ document
 
 html;
 
-document
-.getElementById(
-"status"
-)
-
-.innerHTML=
-
-"Upload Complete";
-
 }
 
 catch(e){
 
-document
-.getElementById(
-"status"
-)
-
-.innerHTML=
-
-"Upload Failed";
+alert(
+"Error: "
++
+e.message
+);
 
 }
 
