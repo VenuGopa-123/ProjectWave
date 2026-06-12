@@ -1,5 +1,5 @@
+```html
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -15,7 +15,7 @@ background:#f5f5f5;
 }
 
 .box{
-max-width:700px;
+max-width:800px;
 margin:auto;
 background:white;
 padding:30px;
@@ -23,13 +23,34 @@ border-radius:15px;
 }
 
 button{
-padding:12px;
+padding:12px 20px;
 margin-top:20px;
+cursor:pointer;
+}
+
+.item{
+margin-top:20px;
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
+}
+
+img{
+max-width:300px;
+border-radius:10px;
+}
+
+video{
+max-width:500px;
+}
+
+audio{
+width:100%;
 }
 
 a{
 display:block;
-margin:10px;
+margin-top:10px;
 }
 
 </style>
@@ -53,6 +74,8 @@ multiple>
 Here!
 </button>
 
+<div id="status"></div>
+
 <div id="links"></div>
 
 </div>
@@ -65,15 +88,35 @@ const URL=
 const KEY=
 "sb_publishable_Ess0L13-6qNB0C4qwUMPDg_AokMv0M2";
 
-
 async function upload(){
 
 let files=
 document
-.getElementById("files")
+.getElementById(
+"files"
+)
 .files;
 
+if(files.length===0){
+
+alert(
+"Select files first"
+);
+
+return;
+
+}
+
 for(let f of files){
+
+try{
+
+document
+.getElementById(
+"status"
+)
+.innerHTML=
+"Uploading...";
 
 let path=
 Date.now()
@@ -82,7 +125,6 @@ Date.now()
 +
 f.name;
 
-let r=
 await fetch(
 
 URL+
@@ -122,6 +164,107 @@ URL+
 
 path;
 
+let ext=
+f.name
+.split(".")
+.pop()
+.toLowerCase();
+
+let html=
+'<div class="item">';
+
+html+=
+"<h3>"
++
+f.name
++
+"</h3>";
+
+if(
+["jpg","jpeg","png","gif","webp"]
+.includes(ext)
+){
+
+html+=
+`
+<img src="${publicUrl}">
+`;
+
+}
+
+else if(
+["mp3","wav","ogg"]
+.includes(ext)
+){
+
+html+=
+`
+<audio controls>
+<source src="${publicUrl}">
+</audio>
+`;
+
+}
+
+else if(
+["mp4","webm"]
+.includes(ext)
+){
+
+html+=
+`
+<video controls>
+<source src="${publicUrl}">
+</video>
+`;
+
+}
+
+else if(
+ext==="pdf"
+){
+
+html+=
+`
+<iframe
+src="${publicUrl}"
+width="100%"
+height="500">
+</iframe>
+`;
+
+}
+
+else{
+
+html+=
+`
+<a
+href="${publicUrl}"
+target="_blank">
+
+Open File
+
+</a>
+`;
+
+}
+
+html+=
+`
+<br>
+
+<a
+href="${publicUrl}"
+target="_blank">
+
+Open Directly
+
+</a>
+
+</div>
+`;
+
 document
 .getElementById(
 "links"
@@ -131,9 +274,31 @@ document
 
 +=
 
-`<a href="${publicUrl}" target="_blank">
-${f.name}
-</a>`;
+html;
+
+document
+.getElementById(
+"status"
+)
+
+.innerHTML=
+
+"Upload Complete";
+
+}
+
+catch(e){
+
+document
+.getElementById(
+"status"
+)
+
+.innerHTML=
+
+"Upload Failed";
+
+}
 
 }
 
@@ -144,3 +309,4 @@ ${f.name}
 </body>
 
 </html>
+```
