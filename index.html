@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Project Wave</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:40px;
+background:#f5f5f5;
+}
+
+.box{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+}
+
+button{
+padding:12px;
+margin-top:20px;
+}
+
+a{
+display:block;
+margin:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Let's Start!</h1>
+
+<input
+type="file"
+id="files"
+multiple>
+
+<br>
+
+<button onclick="upload()">
+Here!
+</button>
+
+<div id="links"></div>
+
+</div>
+
+<script>
+
+const URL=
+"https://stcyjxvxmsrddbbpksqw.supabase.co";
+
+const KEY=
+"sb_publishable_Ess0L13-6qNB0C4qwUMPDg_AokMv0M2";
+
+
+async function upload(){
+
+let files=
+document
+.getElementById("files")
+.files;
+
+for(let f of files){
+
+let path=
+Date.now()
++
+"_"
++
+f.name;
+
+let r=
+await fetch(
+
+URL+
+
+"/storage/v1/object/uploads/"
+
++
+
+path,
+
+{
+
+method:"POST",
+
+headers:{
+
+apikey:KEY,
+
+Authorization:
+"Bearer "+KEY
+
+},
+
+body:f
+
+}
+
+);
+
+let publicUrl=
+
+URL+
+
+"/storage/v1/object/public/uploads/"
+
++
+
+path;
+
+document
+.getElementById(
+"links"
+)
+
+.innerHTML
+
++=
+
+`<a href="${publicUrl}" target="_blank">
+${f.name}
+</a>`;
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
